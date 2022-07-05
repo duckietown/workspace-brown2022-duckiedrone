@@ -1,0 +1,7 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex megaman"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="example_catkin_package" type="my_node.py" name="my_node" output='screen' />
+    </group>
+</launch>

@@ -1,0 +1,5 @@
+altitude
+/code/user_ws/brown2022/devel/.private/altitude/cmake.lock /code/user_ws/brown2022/devel/./cmake.lock
+/code/user_ws/brown2022/devel/.private/altitude/lib/pkgconfig/altitude.pc /code/user_ws/brown2022/devel/lib/pkgconfig/altitude.pc
+/code/user_ws/brown2022/devel/.private/altitude/share/altitude/cmake/altitudeConfig.cmake /code/user_ws/brown2022/devel/share/altitude/cmake/altitudeConfig.cmake
+/code/user_ws/brown2022/devel/.private/altitude/share/altitude/cmake/altitudeConfig-version.cmake /code/user_ws/brown2022/devel/share/altitude/cmake/altitudeConfig-version.cmake

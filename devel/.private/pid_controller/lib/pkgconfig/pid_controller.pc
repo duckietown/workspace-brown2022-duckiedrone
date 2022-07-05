@@ -1,0 +1,8 @@
+prefix=/code/user_ws/brown2022/devel/.private/pid_controller
+
+Name: pid_controller
+Description: Description of pid_controller
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

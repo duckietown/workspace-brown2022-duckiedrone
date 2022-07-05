@@ -1,0 +1,8 @@
+prefix=/code/user_ws/brown2022/devel/.private/altitude
+
+Name: altitude
+Description: Description of altitude
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

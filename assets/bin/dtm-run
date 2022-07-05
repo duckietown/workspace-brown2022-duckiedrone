@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+source dtm-init
+
+# try to attach (exit if attached successfully)
+set -e
+dtm-attach
+set +e
+
+# define user workspaces
+DTM_USER_WORKSPACES=""
+if [ "$1" = "--student" ]; then
+    echo "IMPORTANT:"
+    echo ""
+    echo "    Using student code"
+    echo ""
+    DTM_USER_WORKSPACES="brown2022,"
+fi
+
+# define environment file
+DTM_STACK_ENV_FILE="/tmp/${DTM_USER_WS_NAME}__${DTM_STACK_NAME}__${DTM_SERVICE_NAME}.env"
+cat <<EOT > "${DTM_STACK_ENV_FILE}"
+ARCH=${DTM_ARCH}
+DTM_USER_WORKSPACES=${DTM_USER_WORKSPACES}
+EOT
+
+# create
+docker-compose \
+    --file "${DTM_STACK_FILE}" \
+    --project-name "${DTM_USER_WS_NAME}" \
+    --env-file "${DTM_STACK_ENV_FILE}" \
+    up \
+        --no-start \
+        -- \
+        "${DTM_SERVICE_NAME}"
+sleep 0.5
+
+# try to attach (exit if attached successfully)
+set -e
+dtm-attach
+set +e
+
+# start and attach instead
+docker start -ia "${DTM_CONTAINER_NAME}"

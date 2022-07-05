@@ -1,0 +1,88 @@
+version: '3.0'
+
+services:
+    altitude:
+        image: docker.io/duckietown/dt-drone-interface:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-altitude-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    
+    state_estimation:
+        image: docker.io/duckietown/dt-drone-interface:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-state-estimation-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    
+    flight_controller:
+        image: docker.io/duckietown/dt-drone-interface:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-flight-controller-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+
+    optical_flow:
+        image: docker.io/duckietown/dt-core:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-optical-flow-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    
+    aux1:
+        image: docker.io/duckietown/env-brown2022-aux:latest-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-bash
+        stdin_open: true
+        tty: true
+        user: "duckie"
+        working_dir: "/home/duckie"
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    
+    aux2:
+        image: docker.io/duckietown/env-brown2022-aux:latest-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-bash
+        stdin_open: true
+        tty: true
+        user: "duckie"
+        working_dir: "/home/duckie"
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket

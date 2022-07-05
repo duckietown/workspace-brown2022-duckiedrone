@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+source dtm-init
+
+if [ "$(docker ps -aq -f status=running -f name="${DTM_CONTAINER_NAME}")" ]; then
+    # attach
+    docker attach "${DTM_CONTAINER_NAME}"
+    # notify super process we attached successfully
+    exit 1
+fi

@@ -1,0 +1,100 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "terminals.showDescriptions": true,
+        "terminals.env": {
+            "__USER_WORKSPACE_NAME__": "brown2022",
+            "__STACK_NAME__": "default"
+        },
+        "terminals.terminals": [
+            {
+                "name": "Altitude",
+                "description": "Combine IMU and ToF to compute drone's altitude",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "altitude"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
+                "name": "State Estimation",
+                "description": "Estimate the drone's position by combining data from various sensors",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "state_estimation"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
+                "name": "Flight Controller",
+                "description": "Build a PID controller to make the drone fly stably",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "flight_controller"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
+                "name": "Optical Flow",
+                "description": "Build an optical-flow-based pose estimation system",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "optical_flow"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
+                "name": "Free 1",
+                "description": "Empty terminal 1",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "aux1"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}",
+                    "exec dtm-run"
+                ]
+            },
+            {
+                "name": "Free 2",
+                "description": "Empty terminal 2",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "aux2"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}",
+                    "exec dtm-run"
+                ]
+            }
+        ]
+    }
+}

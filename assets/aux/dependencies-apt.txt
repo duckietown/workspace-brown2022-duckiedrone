@@ -1,0 +1,8 @@
+# LIST YOUR APT PACKAGES HERE
+netcat
+nmap
+wget
+iputils-ping
+openssh-client
+
+

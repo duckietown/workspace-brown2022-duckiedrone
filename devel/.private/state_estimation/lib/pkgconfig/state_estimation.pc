@@ -1,0 +1,8 @@
+prefix=/code/user_ws/brown2022/devel/.private/state_estimation
+
+Name: state_estimation
+Description: Description of state_estimation
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

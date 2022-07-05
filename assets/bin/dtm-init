@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+export DTM_USER_WS_NAME=${__USER_WORKSPACE_NAME__}
+export DTM_STACK_NAME=${__STACK_NAME__}
+export DTM_SERVICE_NAME=${__SERVICE_NAME__}
+
+export DTM_USER_WS_DIR="/code/user_ws/${DTM_USER_WS_NAME}"
+export DTM_ASSETS_DIR="${DTM_USER_WS_DIR}/assets"
+export DTM_STACKS_DIR="${DTM_ASSETS_DIR}/stacks"
+export DTM_STACK_FILE="${DTM_STACKS_DIR}/${DTM_STACK_NAME}/docker-compose.yaml"
+
+export DTM_PROJECT_NAME="${DTM_USER_WS_NAME}"
+export DTM_CONTAINER_NAME="${DTM_PROJECT_NAME}_${DTM_SERVICE_NAME}_1"
+
+export DTM_ARCH=amd64
