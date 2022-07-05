@@ -60,7 +60,6 @@ services:
         command: dt-launcher-bash
         stdin_open: true
         tty: true
-        user: "duckie"
         working_dir: "/home/duckie"
         environment:
             DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
@@ -77,7 +76,6 @@ services:
         command: dt-launcher-bash
         stdin_open: true
         tty: true
-        user: "duckie"
         working_dir: "/home/duckie"
         environment:
             DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
