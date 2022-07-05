@@ -95,6 +95,12 @@
                     "exec dtm-run"
                 ]
             }
-        ]
+        ],
+        "files.exclude": {
+            "assets": true,
+            "devel": true,
+            ".gitignore": true,
+            ".catkin_tools": true
+        }
     }
 }

@@ -12,4 +12,4 @@ export DTM_STACK_FILE="${DTM_STACKS_DIR}/${DTM_STACK_NAME}/docker-compose.yaml"
 export DTM_PROJECT_NAME="${DTM_USER_WS_NAME}"
 export DTM_CONTAINER_NAME="${DTM_PROJECT_NAME}_${DTM_SERVICE_NAME}_1"
 
-export DTM_ARCH=amd64
+export DTM_ARCH=arm64v8
