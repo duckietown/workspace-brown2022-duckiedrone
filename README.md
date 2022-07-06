@@ -1,4 +1,4 @@
-# workspace-duckiedrone-core
+# workspace-brown2022-duckiedrone
 
 Workspace used to work on the duckiedrone DD21 for `brown2022`.
 
