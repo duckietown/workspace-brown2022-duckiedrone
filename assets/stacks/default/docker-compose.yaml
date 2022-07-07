@@ -41,10 +41,36 @@ services:
             - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
 
     optical_flow:
-        image: docker.io/duckietown/dt-core:ente-${ARCH}
+        image: docker.io/duckietown/env-brown2022-aux:ente-${ARCH}
         restart: unless-stopped
         network_mode: host
         command: dt-launcher-optical-flow-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+
+    localization:
+        image: docker.io/duckietown/env-brown2022-aux:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-localization-node
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+
+    slam:
+        image: docker.io/duckietown/env-brown2022-aux:ente-${ARCH}
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-slam-node
         environment:
             DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
         volumes:
