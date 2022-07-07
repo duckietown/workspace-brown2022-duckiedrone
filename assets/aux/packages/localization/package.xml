@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package>
+  <name>localization</name>
+  <version>0.0.0</version>
+  <description>The localization package</description>
+
+  <license>GPLv3</license>
+  <maintainer email="nobody@duckietown.com">Nobody</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

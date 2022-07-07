@@ -68,6 +68,32 @@
                 ]
             },
             {
+                "name": "Localization",
+                "description": "Localization based on visual features",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "localization"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
+                "name": "SLAM",
+                "description": "Simultaneous Localization and Mapping",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "slam"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+            {
                 "name": "Free 1",
                 "description": "Empty terminal 1",
                 "open": true,

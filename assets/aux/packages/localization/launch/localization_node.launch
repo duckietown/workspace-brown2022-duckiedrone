@@ -1,0 +1,10 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex megaman"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="localization" type="localization_node.py" name="localization_node" output='screen'>
+            <remap from="~imu" to="flight_controller_node/imu"/>
+            <param name="~foo" value="5"/>
+        </node>
+    </group>
+</launch>
