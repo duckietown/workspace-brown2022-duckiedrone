@@ -27,11 +27,11 @@ services:
             # avahi socket
             - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
     
-    flight_controller:
+    pid_controller:
         image: docker.io/duckietown/dt-drone-interface:ente-${ARCH}
         restart: unless-stopped
         network_mode: host
-        command: dt-launcher-flight-controller-node
+        command: dt-launcher-pid-controller-node
         environment:
             DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
         volumes:

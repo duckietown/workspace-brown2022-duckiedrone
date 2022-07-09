@@ -11,9 +11,11 @@ These modules are:
 
 - **Altitude**: Combines IMU and ToF readings to compute drone's altitude;
 - **State Estimation**: Estimate the drone's position by combining data from various sensors;
-- **Flight Controller**: Controls the robot's action in order to achieve a desired behavior (e.g., hover in place, move forward, etc.);
+- **PID Controller**: Controls the robot's action in order to achieve a desired behavior (e.g., hover in place, move forward, etc.);
 - **Optical Flow**: Estimate drone's movement from changes in the camera frame;
 
+
+TODO: add Localization and SLAM
 
 ## Open all modules' terminals
 
