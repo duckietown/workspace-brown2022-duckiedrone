@@ -54,7 +54,7 @@ sudo cp ./config/* ${CONFIG_MOUNTPOINT}/
 sudo umount ${CONFIG_MOUNTPOINT}
 
 # add /config to /etc/fstab
-echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" | sudo tee -a "${ROOT_MOUNTPOINT}/etc/fstab"
+echo "/dev/mmcblk0p3  /config           vfat    defaults,flush    0       2" | sudo tee -a "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
 sudo git clone \
@@ -69,7 +69,7 @@ docker run \
     --privileged \
     --name brown2022-disk-image-dind \
     -v "$(realpath ${ROOT_MOUNTPOINT}/var/lib/docker):/var/lib/docker" \
-    arm64v8/docker:20.10.5-dind \
+    docker:20.10.5-dind \
         dockerd --host=tcp://0.0.0.0:2375 --bridge=none
 
 # wait for dind to start and then get its IP
