@@ -43,9 +43,8 @@ echo w    # Write changes
 sudo mkfs -t vfat ${LOOPDEV}p3
 
 # mount partition
-DISK=/dev/disk/by-label/${ROOT_PARTITION}
 sudo mkdir -p ${ROOT_MOUNTPOINT}
-sudo mount -t auto ${DISK} ${ROOT_MOUNTPOINT}
+sudo mount -t auto "${LOOPDEV}p2" ${ROOT_MOUNTPOINT}
 
 # add default configuration
 sudo mkdir -p ${CONFIG_MOUNTPOINT}
