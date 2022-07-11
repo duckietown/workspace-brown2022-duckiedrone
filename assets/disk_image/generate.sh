@@ -69,7 +69,7 @@ docker run \
     --privileged \
     --name brown2022-disk-image-dind \
     -v "$(realpath ${ROOT_MOUNTPOINT}/var/lib/docker):/var/lib/docker" \
-    docker:dind \
+    arm64v8/docker:20.10.5-dind \
         dockerd --host=tcp://0.0.0.0:2375 --bridge=none
 
 # wait for dind to start and then get its IP
