@@ -39,8 +39,9 @@ echo t    # Change partition type
 echo 3    # Partition number
 echo 0c   # Partition type FAT32 (LBA)
 echo w    # Write changes
-) | sudo fdisk ${LOOPDEV}
-sudo mkfs -t vfat ${LOOPDEV}p3
+) | sudo fdisk "${LOOPDEV}"
+sudo mkfs -t vfat "${LOOPDEV}p3"
+sudo fatlabel "${LOOPDEV}p3" config
 
 # mount partition
 sudo mkdir -p ${ROOT_MOUNTPOINT}
@@ -115,6 +116,7 @@ strings -t d "${SD_CARD_FILE}" | grep "dt1-"
 
 # clear
 sudo rmdir ${ROOT_MOUNTPOINT}
+sudo rmdir ${CONFIG_MOUNTPOINT}
 sudo rmdir ./partitions
 
 # compress
