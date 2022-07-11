@@ -70,6 +70,7 @@
             {
                 "name": "Localization",
                 "description": "Localization based on visual features",
+                "icon": "repo",
                 "open": true,
                 "focus": false,
                 "recycle": true,
@@ -83,6 +84,7 @@
             {
                 "name": "SLAM",
                 "description": "Simultaneous Localization and Mapping",
+                "icon": "repo",
                 "open": true,
                 "focus": false,
                 "recycle": true,

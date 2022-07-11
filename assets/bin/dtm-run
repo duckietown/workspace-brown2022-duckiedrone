@@ -15,6 +15,9 @@ if [ "$1" = "--student" ]; then
     echo "    Using student code"
     echo ""
     DTM_USER_WORKSPACES="brown2022,"
+    set-title "student"
+else
+    set-title "default"
 fi
 
 # define environment file

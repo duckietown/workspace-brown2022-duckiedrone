@@ -13,3 +13,14 @@ export DTM_PROJECT_NAME="${DTM_USER_WS_NAME}"
 export DTM_CONTAINER_NAME="${DTM_PROJECT_NAME}_${DTM_SERVICE_NAME}_1"
 
 export DTM_ARCH=arm64v8
+
+# function to set terminal title
+function set-title() {
+    if [[ -z "$ORIG" ]]; then
+    ORIG=$PS1
+    fi
+    TITLE="\[\e]2;$*\a\]"
+    PS1=${ORIG}${TITLE}
+}
+
+set-title ""
