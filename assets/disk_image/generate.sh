@@ -48,6 +48,7 @@ sudo mount -t auto ${DISK} ${ROOT_MOUNTPOINT}
 
 # add /config to /etc/fstab
 sudo mkdir "${ROOT_MOUNTPOINT}/config"
+sudo cp ./config/* "${ROOT_MOUNTPOINT}/config/"
 echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" >> "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
