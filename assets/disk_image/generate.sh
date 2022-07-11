@@ -7,6 +7,9 @@ SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v1.img
 SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v1.zip
 ROOT_PARTITION=rootfs
 ROOT_MOUNTPOINT=./partitions/root
+REGISTRY=docker.io
+DISTRO=ente
+ARCH=arm64v8
 
 # perform surgery
 dts init_sd_card \
@@ -24,10 +27,28 @@ strings -t d "${SD_CARD_FILE}" | grep "dt1-"
 LOOPDEV=$(sudo losetup --show -fPL "${SD_CARD_FILE}")
 sudo udevadm trigger
 
+# make /config partition
+(
+echo n    # Add a new partition
+echo p    # Primary partition
+echo 3    # Partition number
+echo      # First sector (Accept default: 2048)
+echo      # Last sector (Accept default: 8191)
+echo t    # Change partition type
+echo 3    # Partition number
+echo 0c   # Partition type FAT32 (LBA)
+echo w    # Write changes
+) | sudo fdisk ${LOOPDEV}
+sudo mkfs -t vfat ${LOOPDEV}p3
+
 # mount partition
 DISK=/dev/disk/by-label/${ROOT_PARTITION}
 sudo mkdir -p ${ROOT_MOUNTPOINT}
 sudo mount -t auto ${DISK} ${ROOT_MOUNTPOINT}
+
+# add /config to /etc/fstab
+sudo mkdir "${ROOT_MOUNTPOINT}/config"
+echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" >> "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
 sudo git clone \
@@ -51,6 +72,23 @@ DIND_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{e
 
 # pull image
 docker -H "tcp://${DIND_IP}:2375" pull docker.io/duckietown/env-brown2022-aux:latest-arm64v8
+
+# update all images
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-dashboard:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-files-api:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-code-api:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-proxy:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-health:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-online:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-vscode:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-wifi-access-point:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-ros-commons:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-duckiebot-interface:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-drone-interface:${DISTRO}-${ARCH}
+docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-rosbridge-websocket:${DISTRO}-${ARCH}
+
+# remove old images
+docker -H "tcp://${DIND_IP}:2375" image prune --force
 
 # stop dind
 docker stop brown2022-disk-image-dind
