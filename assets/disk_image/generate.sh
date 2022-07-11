@@ -54,7 +54,7 @@ sudo cp ./config/* ${CONFIG_MOUNTPOINT}/
 sudo umount ${CONFIG_MOUNTPOINT}
 
 # add /config to /etc/fstab
-echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" | sudo tee "${ROOT_MOUNTPOINT}/etc/fstab"
+echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" | sudo tee -a "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
 sudo git clone \
