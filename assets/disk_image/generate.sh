@@ -7,6 +7,7 @@ SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.img
 SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.zip
 ROOT_PARTITION=rootfs
 ROOT_MOUNTPOINT=./partitions/root
+CONFIG_MOUNTPOINT=./partitions/config
 REGISTRY=docker.io
 DISTRO=ente
 ARCH=arm64v8
@@ -46,9 +47,13 @@ DISK=/dev/disk/by-label/${ROOT_PARTITION}
 sudo mkdir -p ${ROOT_MOUNTPOINT}
 sudo mount -t auto ${DISK} ${ROOT_MOUNTPOINT}
 
+# add default configuration
+sudo mkdir -p ${CONFIG_MOUNTPOINT}
+sudo mount -t auto "${LOOPDEV}p3" ${CONFIG_MOUNTPOINT}
+sudo cp ./config/* ${CONFIG_MOUNTPOINT}/
+sudo umount ${CONFIG_MOUNTPOINT}
+
 # add /config to /etc/fstab
-sudo mkdir "${ROOT_MOUNTPOINT}/config"
-sudo cp ./config/* "${ROOT_MOUNTPOINT}/config/"
 echo "PARTUUID=69aeb770-03  /config           vfat    defaults,flush    0       2" | sudo tee "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
