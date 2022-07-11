@@ -3,8 +3,8 @@
 set -ex
 
 INPUT_IMG=$1
-SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v1.img
-SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v1.zip
+SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.img
+SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.zip
 ROOT_PARTITION=rootfs
 ROOT_MOUNTPOINT=./partitions/root
 REGISTRY=docker.io
