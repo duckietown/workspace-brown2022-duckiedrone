@@ -3,9 +3,8 @@
 set -ex
 
 INPUT_IMG=$1
-SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.img
-SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v2.zip
-ROOT_PARTITION=rootfs
+SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-v4.img
+SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-v4.zip
 ROOT_MOUNTPOINT=./partitions/root
 CONFIG_MOUNTPOINT=./partitions/config
 REGISTRY=docker.io
@@ -103,6 +102,9 @@ docker stop brown2022-disk-image-dind
 ls -alh ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
 sudo shred ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
 sudo rm -f ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
+
+# log wifi-access-point by default
+sudo mkdir ${ROOT_MOUNTPOINT}/data/logs/containers/wifi-access-point
 
 # flush
 sudo sync
