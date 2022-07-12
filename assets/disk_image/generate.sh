@@ -21,7 +21,7 @@ dts init_sd_card \
     --device "${SD_CARD_FILE}"
 
 # find secrets
-strings -t d "${SD_CARD_FILE}" | grep "dt1-"
+# strings -t d "${SD_CARD_FILE}" | grep "dt1-"
 
 # mount disk
 LOOPDEV=$(sudo losetup --show -fPL "${SD_CARD_FILE}")
@@ -114,7 +114,7 @@ sudo umount ${ROOT_MOUNTPOINT}
 sudo losetup -d "${LOOPDEV}"
 
 # find secrets
-strings -t d "${SD_CARD_FILE}" | grep "dt1-"
+# strings -t d "${SD_CARD_FILE}" | grep "dt1-"
 
 # clear
 sudo rmdir ${ROOT_MOUNTPOINT}
