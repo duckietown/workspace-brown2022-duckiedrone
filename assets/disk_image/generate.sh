@@ -78,9 +78,6 @@ DIND_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{e
 # pull image
 docker -H "tcp://${DIND_IP}:2375" pull docker.io/duckietown/env-brown2022-aux:latest-arm64v8
 
-# remove unused images
-docker -H "tcp://${DIND_IP}:2375" rmi ${REGISTRY}/duckietown/dt-gui-tools:${DISTRO}-${ARCH}
-
 # update all images
 docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-dashboard:${DISTRO}-${ARCH}
 docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-files-api:${DISTRO}-${ARCH}
