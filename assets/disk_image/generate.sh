@@ -61,6 +61,7 @@ sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/code
 git clone \
     https://github.com/duckietown/workspace-brown2022-duckiedrone \
     ${ROOT_MOUNTPOINT}/code/brown2022
+git -C ${ROOT_MOUNTPOINT}/code/brown2022 status
 
 # copy nodes' configuration files
 cp -R ./rootfs/data/config/nodes ${ROOT_MOUNTPOINT}/data/config/nodes
