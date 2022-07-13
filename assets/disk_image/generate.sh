@@ -81,6 +81,9 @@ docker run \
 sleep 20
 DIND_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' brown2022-disk-image-dind)
 
+# remove unused images
+docker -H "tcp://${DIND_IP}:2375" rmi ${REGISTRY}/duckietown/dt-gui-tools:${DISTRO}-${ARCH}
+
 # pull image
 docker -H "tcp://${DIND_IP}:2375" pull docker.io/duckietown/env-brown2022-aux:latest-arm64v8
 
