@@ -56,10 +56,10 @@ sudo umount ${CONFIG_MOUNTPOINT}
 echo "/dev/mmcblk0p3  /config           vfat    defaults,flush    0       2" | sudo tee -a "${ROOT_MOUNTPOINT}/etc/fstab"
 
 # clone workspace repository
-sudo git clone \
+sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/code
+git clone \
     https://github.com/duckietown/workspace-brown2022-duckiedrone \
     ${ROOT_MOUNTPOINT}/code/brown2022
-sudo chown -R 1000:1000 ${ROOT_MOUNTPOINT}/code/brown2022
 
 # run dind
 docker run \
