@@ -64,8 +64,9 @@ git clone \
 git -C ${ROOT_MOUNTPOINT}/code/brown2022 status
 
 # copy nodes' configuration files
-cp -R ./rootfs/data/config/nodes ${ROOT_MOUNTPOINT}/data/config/nodes
-sudo chown -R 1000:1000 ${ROOT_MOUNTPOINT}/data/config/nodes
+sudo mkdir ${ROOT_MOUNTPOINT}/data/config/nodes
+sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/config/nodes
+cp -R ./rootfs/data/config/nodes/* ${ROOT_MOUNTPOINT}/data/config/nodes/
 
 # run dind
 docker run \
