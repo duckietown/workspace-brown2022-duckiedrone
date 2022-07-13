@@ -1,0 +1,7 @@
+# Range is [1-30]
+frequency: 30
+
+# Possible values are:
+#   - GOOD:         Maximum 1.2m range
+#   - LONG_RANGE:   Maximum 2.0m range
+mode: "GOOD"

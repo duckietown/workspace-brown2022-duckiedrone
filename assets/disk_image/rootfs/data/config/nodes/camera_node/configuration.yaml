@@ -1,0 +1,11 @@
+# Possible values are: 5, 15, 30
+framerate: 30
+
+# Possible values are: (640, 480), (1296, 972)
+res_w: 640
+res_h: 480
+
+# Possible values are:
+#   - sports: Use it for short exposure time, good for fast moving targets
+#   - night:  Use it for long exposure time, good for slow moving targets
+exposure_mode: sports

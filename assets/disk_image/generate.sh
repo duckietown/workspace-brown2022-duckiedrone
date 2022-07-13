@@ -62,6 +62,10 @@ git clone \
     https://github.com/duckietown/workspace-brown2022-duckiedrone \
     ${ROOT_MOUNTPOINT}/code/brown2022
 
+# copy nodes' configuration files
+cp -R ./rootfs/data/config/nodes ${ROOT_MOUNTPOINT}/data/config/nodes
+sudo chown -R 1000:1000 ${ROOT_MOUNTPOINT}/data/config/nodes
+
 # run dind
 docker run \
     -d \
