@@ -7,21 +7,22 @@ from sensor_msgs.msg import Imu
 from sensor_msgs.msg import Range
 from std_msgs.msg import Empty
 
-from duckietown.dtros import DTROS, NodeType
 
-
-class AltitudeNode(DTROS):
+class AltitudeNode:
 
     def __init__(self, node_name):
-        # initialize the DTROS parent class
-        super(AltitudeNode, self).__init__(
-            node_name=node_name,
-            node_type=NodeType.PERCEPTION
-        )
+        # initialize ROS node
+        rospy.init_node(node_name)
+
+        # parameters
+        self._h_offset = rospy.get_param("~h_offset", 0.0)
 
         # this is the angle between the direction the range finder is pointed (normal to the drone)
         # and the gravity vector (towards the ground)
         self._angle = 0
+
+        # we keep track of the last range to properly handle out-of-range messages
+        self._last_range = 0
 
         # subscribers
         self._sub_imu = rospy.Subscriber('~imu', Imu, self.imu_cb, queue_size=1)
@@ -65,7 +66,19 @@ class AltitudeNode(DTROS):
             msg:  the message from the Time-of-Flight sensor
 
         """
-        altitude = msg.range * np.cos(self._angle)
+        range = msg.range
+        if range > msg.max_range:
+            if self._last_range == 0:
+                return
+            # out-of-range, assume last range
+            range = self._last_range
+        # keep track of last range
+        self._last_range = range
+        # offset the range by the distance between the sensor frame and the footprint frame
+        range = max(range - self._h_offset, 0.0)
+        # compute altitude from range and angle
+        altitude = range * np.cos(self._angle)
+        # publish message
         msg = Range(
             header=msg.header,
             radiation_type=msg.radiation_type,
@@ -75,6 +88,7 @@ class AltitudeNode(DTROS):
             range=altitude
         )
         self._pub.publish(msg)
+        # update heartbeat
         self._heartbeat.publish(Empty())
 
 
