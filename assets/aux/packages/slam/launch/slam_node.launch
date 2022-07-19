@@ -2,9 +2,6 @@
     <arg name="veh" doc="Name of vehicle. ex megaman"/>
 
     <group ns="$(arg veh)">
-        <node pkg="slam" type="slam_node.py" name="slam_node" output='screen'>
-            <remap from="~imu" to="flight_controller_node/imu"/>
-            <param name="~foo" value="5"/>
-        </node>
+        <node pkg="slam" type="slam_node.py" name="slam_node" output='screen' />
     </group>
 </launch>
