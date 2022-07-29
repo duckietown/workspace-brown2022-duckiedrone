@@ -2,7 +2,7 @@
     <arg name="veh" doc="Name of vehicle. ex megaman"/>
 
     <group ns="$(arg veh)">
-        <node pkg="altitude_node" type="altitude_node.py" name="altitude_node" output='screen'>
+        <node pkg="altitude" type="altitude_node.py" name="altitude_node" output='screen'>
             <remap from="~imu" to="flight_controller_node/imu"/>
             <remap from="~tof" to="bottom_tof_driver_node/range"/>
         </node>
