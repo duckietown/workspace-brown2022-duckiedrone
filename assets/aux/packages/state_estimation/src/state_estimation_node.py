@@ -2,7 +2,7 @@
 
 import argparse
 import rospy
-from pidrone_pkg.msg import State, StateGroundTruth, UkfStats
+from brown2022_msgs.msg import State, StateGroundTruth, UkfStats
 import subprocess
 import os
 
@@ -65,11 +65,11 @@ class StateEstimator(object):
             sim_cmd += ' --ir_var '+str(ir_var)
         
         self.process_cmds_dict = {
-                'ema': 'rosrun pidrone_pkg scripts/StateEstimators/state_estimator_ema.py',
-                'ukf2d': '{}state_estimator_ukf_2d.py'.format(program_str),
-                'ukf7d': '{}state_estimator_ukf_7d.py'.format(program_str),
-                'ukf12d': 'rosrun pidrone_pkg scripts/state_estimator_ukf_12d.py',
-                'mocap': 'rosrun pidrone_pkg scripts/state_estimator_mocap.py',  # TODO: Implement this
+                'ema': 'state_estimator_ema',
+                'ukf2d': 'state_estimator_ukf_2d',
+                'ukf7d': 'state_estimator_ukf_7d',
+                'ukf12d': 'state_estimator_ukf_12d',
+                'mocap': 'state_estimator_mocap', 
                 'simulator': sim_cmd
         }
         
@@ -97,13 +97,7 @@ class StateEstimator(object):
 
         self.setup_ukf_with_ground_truth()
         self.start_estimator_subprocess_cmds()
-        self.initialize_ros()
 
-    def initialize_ros(self):
-        node_name = os.path.splitext(os.path.basename(__file__))[0]
-        rospy.init_node(node_name)
-
-        rospy.spin()
     
     def start_estimator_subprocess_cmds(self):
         cmd = self.process_cmds_dict[self.primary_estimator]
@@ -135,11 +129,20 @@ class StateEstimator(object):
                 other_cmd = self.process_cmds_dict[other_estimator]
                 other_cmd = self.append_throttle_flags(other_cmd, other_estimator)
                 process_cmds.append(other_cmd)
+
+        if len(process_cmds) != 1:
+
+            # we broke this to dockerize it, so we can't
+            # run more than one without being fancier.  it was using Popen before.
             
+            raise
         for p in process_cmds:
             print('Starting:' + p)
             # NOTE: shell=True could be security hazard
-            self.processes.append((p, subprocess.Popen(p, shell=True)))
+            module = __import__(p)
+            
+            self.processes.append((p, module.main))
+            module.main()
             
     def setup_ukf_with_ground_truth(self):
         """
@@ -342,8 +345,8 @@ def main():
                         type=check_positive_float_duration,
                         help=('Frequency at which to run the predict-update '
                               'loop of the UKF (default: 30)'))
-                              
-    args = parser.parse_args()
+    print("not parsing arguments")
+    args = parser.parse_args(args=[])
     
     try:
         se = StateEstimator(primary=args.primary,
@@ -358,15 +361,6 @@ def main():
                             loop_hz=args.loop_hz)
     except Exception as e:
         print(e)
-    finally:
-        # Terminate the subprocess calls. Note, however, that if Ctrl-C is
-        # entered in stdin, it seems that the subprocesses also get the Ctrl-C
-        # input and are terminating based on KeyboardInterrupt
-        print('Terminating subprocess calls...')
-        for process_name, process in se.processes:
-            print('Terminating:', process_name)
-            process.terminate()
-        print('Done.')
 
 
 if __name__ == "__main__":
