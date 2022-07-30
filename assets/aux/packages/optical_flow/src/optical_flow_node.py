@@ -15,6 +15,9 @@ from duckietown.dtros import DTROS, NodeType
 
 
 class OpticalFlowNode(DTROS):
+    """
+    Subscribe to the optical flow vectors and publish linear velocity as a Twist message.
+    """
     def __init__(self, node_name):
         # initialize the DTROS parent class
         super(OpticalFlowNode, self).__init__(
