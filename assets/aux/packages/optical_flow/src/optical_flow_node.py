@@ -31,7 +31,7 @@ class OpticalFlowNode(DTROS):
         self.flow_scale = .165
         self.flow_coeff = 100 * self.flow_scale / self.max_flow # (multiply by 100 for cm to m conversion)
 
-        self.altitude = 0.0
+        self.altitude = 0.03 # initialize to a bit off the ground
 
 
         # subscribers
@@ -54,11 +54,14 @@ class OpticalFlowNode(DTROS):
         twist_msg = TwistStamped()
         twist_msg.header.stamp = rospy.Time.now()
         twist_msg.twist.linear.x = x_motion
-        twist_msg.twist.linear.y = - y_motion
-
+        twist_msg.twist.linear.y = -y_motion
+        #print(self.altitude)
+        #print(x_motion,-y_motion)
         # Update and publish the twist message
         self.twistpub.publish(twist_msg)
-
+        duration_from_last_altitude = rospy.Time.now() - self.altitude_ts
+        if duration_from_last_altitude.to_sec() > 10:
+            rospy.logwarn("No altitude received for " + duration_from_last_altitude)
 
     def altitude_cb(self, msg):
         """
@@ -68,6 +71,7 @@ class OpticalFlowNode(DTROS):
 
         """
         self.altitude = msg.range
+        self.altitude_ts = msg.header.stamp
     
 def main():
     optical_flow_node = OpticalFlowNode("optical_flow_node")
