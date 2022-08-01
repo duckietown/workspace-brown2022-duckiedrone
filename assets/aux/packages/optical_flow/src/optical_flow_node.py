@@ -24,7 +24,7 @@ class OpticalFlowNode(DTROS):
             node_name=node_name,
             node_type=NodeType.PERCEPTION
         )
-        self.twistpub = rospy.Publisher('/pidrone/picamera/twist', TwistStamped, queue_size=1)
+        self.twistpub = rospy.Publisher('~twist', TwistStamped, queue_size=1)
         # flow variables
         camera_wh = (320, 240)        
         self.max_flow = camera_wh[0] / 16.0 * camera_wh[1] / 16.0 * 2**7
@@ -32,11 +32,11 @@ class OpticalFlowNode(DTROS):
         self.flow_coeff = 100 * self.flow_scale / self.max_flow # (multiply by 100 for cm to m conversion)
 
         self.altitude = 0.03 # initialize to a bit off the ground
-
+        self.altitude_ts = rospy.Time.now()
 
         # subscribers
-        self._sub_mv = rospy.Subscriber('/cosmo/camera_node/motion_vectors', H264MotionVectors, self.motion_cb, queue_size=1)
-        self._sub_tof = rospy.Subscriber('/cosmo/altitude_node/altitude', Range, self.altitude_cb, queue_size=1)
+        self._sub_mv = rospy.Subscriber('~motion_vectors', H264MotionVectors, self.motion_cb, queue_size=1)
+        self._sub_tof = rospy.Subscriber('~altitude', Range, self.altitude_cb, queue_size=1)
 
 
 
@@ -61,7 +61,7 @@ class OpticalFlowNode(DTROS):
         self.twistpub.publish(twist_msg)
         duration_from_last_altitude = rospy.Time.now() - self.altitude_ts
         if duration_from_last_altitude.to_sec() > 10:
-            rospy.logwarn("No altitude received for " + duration_from_last_altitude)
+            rospy.logwarn("No altitude received for {:10.4f} seconds.".format(duration_from_last_altitude.to_sec()))
 
     def altitude_cb(self, msg):
         """
