@@ -11,6 +11,21 @@
             "__STACK_NAME__": "default"
         },
         "terminals.terminals": [
+	    {
+                "name": "PID",
+                "description": "PID Controller",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "pid_controller"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+
             {
                 "name": "Altitude",
                 "description": "Combine IMU and ToF to compute drone's altitude",
