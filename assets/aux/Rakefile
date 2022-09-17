@@ -1,0 +1,31 @@
+
+desc "run optical flow on board the drone"
+task :runflow do
+  sh "dts devel run -R cosmo -L optical-flow-node -M"
+end
+
+
+desc "run rigid transform on the local computer"
+task :runrt do
+  sh "dts devel run -R cosmo -L rigid-transform-node -M"
+end
+
+desc "build image"
+task :build do
+  sh "dts devel build -f"
+end
+
+desc "build and push image to drone"
+task :buildandpush do
+  sh "dts devel build -H cosmo --pull -f"
+end
+
+desc "run shell inside image on my host"
+task :shell do
+  sh "dts devel run -R cosmo -L bash -M"
+end
+
+desc "run in gui shell"
+task :shellgui do
+  sh "dts start_gui_tools cosmo"
+end
