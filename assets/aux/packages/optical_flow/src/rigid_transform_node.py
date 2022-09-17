@@ -2,6 +2,7 @@
 
 
 import tf
+import time
 import cv2
 import rospy
 import numpy as np
@@ -10,6 +11,7 @@ from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import CompressedImage
 from brown2022_msgs.msg import State
 from sensor_msgs.msg import Range
+from cv_bridge import CvBridge
 
 from duckietown.dtros import DTROS, NodeType
 
@@ -22,11 +24,11 @@ class RigidTransformNode(DTROS):
     https://docs.opencv.org/3.0-beta/modules/video/doc/motion_analysis_and_object_tracking.html#estimaterigidtransform
 
     Publisher:
-    /pidrone/picamera/pose
+    ~pose
 
     Subscribers:
-    /pidrone/reset_transform
-    /pidrone/position_control
+    ~reset_transform
+    ~position_control
     """
     def __init__(self, node_name):
         # initialize the DTROS parent class
@@ -37,6 +39,7 @@ class RigidTransformNode(DTROS):
 
         camera_wh = (320, 240)
 
+        self.bridge = CvBridge()
 
         # initialize the Pose data
         self.pose_msg = PoseStamped()
@@ -91,16 +94,26 @@ class RigidTransformNode(DTROS):
         ''' A method that is called everytime an image is taken '''
 
         #print("image cb: " + msg.format)
-        jpg = np.frombuffer(msg.data, np.uint8)
-        data = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
+        #jpg = np.frombuffer(msg.data, np.uint8)
+        #data = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
+        
+        #image = np.reshape(np.frombuffer(data, dtype=np.uint8), (240, 320, 3))
+
+        
+        #image = self.bridge.compressed_imgmsg_to_cv2(msg)
+        image = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding="mono8")
+        dimage = image.copy()
+
+        #print(image.shape)
+        #cv2.waitKey(0)
+        #time.sleep(10)
+        # Run the following only if position control is enabled to prevent
+        # wasting computation resources on unused position data
 
         duration_from_last_altitude = rospy.Time.now() - self.altitude_ts
         if duration_from_last_altitude.to_sec() > 10:
             rospy.logwarn("No altitude received for {:10.4f} seconds.".format(duration_from_last_altitude.to_sec()))
         
-        image = np.reshape(np.frombuffer(data, dtype=np.uint8), (240, 320, 3))
-        # Run the following only if position control is enabled to prevent
-        # wasting computation resources on unused position data
         if self.position_control:
             
 
@@ -109,12 +122,27 @@ class RigidTransformNode(DTROS):
                 self.first = False
                 print("Capturing a new first image")
                 self.first_image = image
+                self.first_points = cv2.goodFeaturesToTrack(self.first_image, maxCorners=10, qualityLevel=0.01, minDistance=8)
+                # for point in self.first_points:
+                #     x = int(point[0,0])
+                #     y = int(point[0,1])
+                #     print((x,y))
+                #     cv2.circle(dimage, center=(x,y), radius=2, color=(255,0,0), thickness=10)
+                # cv2.imshow("image", dimage)
+                # cv2.waitKey(10)
                 self.previous_image = image
                 self.last_first_time = rospy.get_time()
             # if a first image has been stored
             else:
                 # try to estimate the transformations from the first image
-                transform_first = cv2.estimateRigidTransform(self.first_image, image, False)
+                #print(self.first_image)
+
+                nextPts, status, err = cv2.calcOpticalFlowPyrLK(self.first_image, image, self.first_points, None)
+
+                transform_first, inliers = cv2.estimateAffinePartial2D(self.first_points, nextPts, False)
+                #print(transform_first)
+
+                #cv2.estimateAffinePartial2D(self.first_image, image, False)
 
                 # if the first image was visible (the transformation was succesful) :
                 if transform_first is not None:
@@ -137,7 +165,7 @@ class RigidTransformNode(DTROS):
                 # else the first image was not visible (the transformation was not succesful) :
                 else:
                     # try to estimate the transformation from the previous image
-                    transform_previous = cv2.estimateRigidTransform(self.previous_image, image, False)
+                    transform_previous, inliers = cv2.estimateAffinePartial2D(self.previous_image, image, False)
 
                     # if the previous image was visible (the transformation was succesful)
                     # calculate the position by integrating
