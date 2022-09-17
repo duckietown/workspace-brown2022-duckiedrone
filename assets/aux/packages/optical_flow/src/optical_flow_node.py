@@ -36,7 +36,7 @@ class OpticalFlowNode(DTROS):
 
         # subscribers
         self._sub_mv = rospy.Subscriber('~motion_vectors', H264MotionVectors, self.motion_cb, queue_size=1)
-        self._sub_tof = rospy.Subscriber('~altitude', Range, self.altitude_cb, queue_size=1)
+        self._sub_alt = rospy.Subscriber('~altitude', Range, self.altitude_cb, queue_size=1)
 
 
 
