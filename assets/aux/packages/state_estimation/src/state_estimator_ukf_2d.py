@@ -42,7 +42,7 @@ class UKFStateEstimator2D(object):
         self.got_ir = False
         self.loop_hz = loop_hz
         
-        self.ir_topic_str = '/pidrone/infrared'
+        self.ir_topic_str = '/pidrone/range'
         self.imu_topic_str = '/pidrone/imu'
         throttle_suffix = '_throttle'
         
@@ -78,6 +78,8 @@ class UKFStateEstimator2D(object):
         
         # Subscribe to topics to which the drone publishes in order to get raw
         # data from sensors, which we can then filter
+        print("Subscribing to: " + self.imu_topic_str)
+        print("Subscribing to: " + self.ir_topic_str)
         rospy.Subscriber(self.imu_topic_str, Imu, self.imu_data_callback)
         rospy.Subscriber(self.ir_topic_str, Range, self.ir_data_callback)
         
