@@ -8,7 +8,7 @@ import os
 
 from duckietown.dtros import DTROS, NodeType
 
-class StateEstimator(DTROS):
+class StateEstimator(object):
     """
     This class is intended to unify the different state estimators so that the
     user only has to call this script to interact with state estimators. This
@@ -34,10 +34,7 @@ class StateEstimator(DTROS):
     def __init__(self, primary, others, ir_throttled=False, imu_throttled=False,
                  optical_flow_throttled=False, camera_pose_throttled=False,
                  sdim=1, student_ukf=False, ir_var=None, loop_hz=None):
-        super(StateEstimator, self).__init__(
-            node_name="state_estimation_node",
-            node_type=NodeType.PERCEPTION
-        )        
+        
         self.state_msg = State()
         
         self.ir_throttled = ir_throttled
@@ -54,7 +51,7 @@ class StateEstimator(DTROS):
         self.estimators.append(self.primary_estimator)
         
         student_project_pkg_dir = 'pidrone_project2_ukf'
-        pidrone_pkg_dir = 'pidrone_pkg'
+        pidrone_pkg_dir = 'state_estimation'
         
         if student_ukf:
             program_str = 'rosrun ' + student_project_pkg_dir + ' StateEstimators/student_'
@@ -68,14 +65,14 @@ class StateEstimator(DTROS):
         if ir_var is not None:
             # Pass in the IR variance value given as a command-line argument
             sim_cmd += ' --ir_var '+str(ir_var)
-        
+
         self.process_cmds_dict = {
-                'ema': 'state_estimator_ema',
-                'ukf2d': 'state_estimator_ukf_2d',
-                'ukf7d': 'state_estimator_ukf_7d',
-                'ukf12d': 'state_estimator_ukf_12d',
-                'mocap': 'state_estimator_mocap', 
-                'simulator': sim_cmd
+            'ema': 'rosrun state_estimation state_estimator_ema.py',
+            'ukf2d': 'rosrun state_estimation state_estimator_ukf_2d.py',
+            'ukf7d': 'rosrun state_estimation state_estimator_ukf_7d.py',
+            'ukf12d': 'rosrun state_estimation state_estimator_ukf_12d.py',
+            'mocap': 'rosrun state_estimation state_estimator_mocap.py',  # TODO: Implement this
+            'simulator': sim_cmd
         }
         
         self.can_use_throttled_ir = ['ukf2d', 'ukf7d', 'ukf12d']
@@ -113,7 +110,9 @@ class StateEstimator(DTROS):
         
     
     def start_estimator_subprocess_cmds(self):
+        print("primary: " + self.primary_estimator)
         cmd = self.process_cmds_dict[self.primary_estimator]
+        print("cmd: " + cmd)
         cmd = self.append_throttle_flags(cmd, self.primary_estimator)
         process_cmds = [cmd]
         if self.primary_estimator == 'ukf2d':

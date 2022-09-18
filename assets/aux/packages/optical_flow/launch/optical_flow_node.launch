@@ -7,4 +7,7 @@
    	  <remap from="~motion_vectors" to="camera_node/motion_vectors"/>
 	</node>
     </group>
+    <node pkg="topic_tools" type="relay" name="relayimu" args="$(arg veh)/flight_controller_node/imu /pidrone/imu"/>
+    <node pkg="topic_tools" type="relay" name="relayrange" args="$(arg veh)/bottom_tof_driver_node/range /pidrone/range"/>
+    
 </launch>
