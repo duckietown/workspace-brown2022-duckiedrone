@@ -65,13 +65,13 @@ class RigidTransformNode(DTROS):
         # ROS Setup
         ###########
         # Publisher
-        self._posepub = rospy.Publisher('rigid_transform_node/pose', PoseStamped, queue_size=1)
-        self._lostpub = rospy.Publisher('rigid_transform_node/lost', Bool, queue_size=1)
+        self._posepub = rospy.Publisher('/pidrone/picamera/pose', PoseStamped, queue_size=1)
+        self._lostpub = rospy.Publisher('/pidrone/picamera/lost', Bool, queue_size=1)
         
         # Subscribers
-        self._rtsub = rospy.Subscriber("reset_transform", Empty, self.reset_callback, queue_size=1)
-        self._pcsub = rospy.Subscriber("rigid_transform_node/position_control", Bool, self.position_control_callback, queue_size=1)
-        self._stsub = rospy.Subscriber("rigid_transform_node/state", State, self.state_callback, queue_size=1)
+        self._rtsub = rospy.Subscriber("/pidrone/reset_transform", Empty, self.reset_callback, queue_size=1)
+        self._pcsub = rospy.Subscriber("/pidrone/position_control", Bool, self.position_control_callback, queue_size=1)
+        self._stsub = rospy.Subscriber("/pidrone/state", State, self.state_callback, queue_size=1)
         self._isub = rospy.Subscriber("~image", CompressedImage, self.image_callback, queue_size=1)
         self._sub_alt = rospy.Subscriber('~altitude', Range, self.altitude_cb, queue_size=1)
 
