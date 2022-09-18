@@ -5,7 +5,8 @@ import rospy
 import tf
 from sensor_msgs.msg import Imu, Range
 from geometry_msgs.msg import PoseStamped, TwistStamped
-from pidrone_pkg.msg import State
+from brown2022_msgs.msg import State
+
 
 # UKF imports
 # The matplotlib imports and the matplotlib.use('Pdf') line make it so that the
@@ -46,7 +47,7 @@ class UKFStateEstimator7D(object):
         self.got_imu = False
         self.loop_hz = loop_hz
         
-        self.ir_topic_str = '/pidrone/infrared'
+        self.ir_topic_str = '/pidrone/range'
         self.imu_topic_str = '/pidrone/imu'
         self.optical_flow_topic_str = '/pidrone/picamera/twist'
         self.camera_pose_topic_str = '/pidrone/picamera/pose'
@@ -89,7 +90,7 @@ class UKFStateEstimator7D(object):
         Initialize ROS-related objects, e.g., the node, subscribers, etc.
         """
         self.node_name = os.path.splitext(os.path.basename(__file__))[0]
-        print 'Initializing {} node...'.format(self.node_name)
+        print('Initializing {} node...'.format(self.node_name))
         rospy.init_node(self.node_name)
         
         # Create the publisher to publish state estimates
@@ -150,8 +151,7 @@ class UKFStateEstimator7D(object):
                                          dt=1.0,
                                          hx=self.measurement_function,
                                          fx=self.state_transition_function,
-                                         points=sigma_points,
-                                         compute_log_likelihood=False)
+                                         points=sigma_points)
         self.initialize_ukf_matrices()
 
     def initialize_ukf_matrices(self):
@@ -218,7 +218,7 @@ class UKFStateEstimator7D(object):
         
     def print_notice_if_first(self):
         if not self.printed_filter_start_notice:
-            print 'Starting filter'
+            print('Starting filter')
             self.printed_filter_start_notice = True
         
     def imu_data_callback(self, data):
@@ -512,9 +512,9 @@ def main():
         se.start_loop()
     finally:
         # Upon termination of this script, print out a helpful message
-        print '{} node terminating.'.format(se.node_name)
-        print 'Most recent state vector:'
-        print se.ukf.x
+        print('{} node terminating.'.format(se.node_name))
+        print('Most recent state vector:')
+        print(se.ukf.x)
         # print 'Most recent state covariance matrix:'
         # print se.ukf.P
         
