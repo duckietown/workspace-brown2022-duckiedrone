@@ -69,7 +69,7 @@ class RigidTransformNode(DTROS):
         self._lostpub = rospy.Publisher('rigid_transform_node/lost', Bool, queue_size=1)
         
         # Subscribers
-        self._rtsub = rospy.Subscriber("rigid_transform_node/reset_transform", Empty, self.reset_callback, queue_size=1)
+        self._rtsub = rospy.Subscriber("reset_transform", Empty, self.reset_callback, queue_size=1)
         self._pcsub = rospy.Subscriber("rigid_transform_node/position_control", Bool, self.position_control_callback, queue_size=1)
         self._stsub = rospy.Subscriber("rigid_transform_node/state", State, self.state_callback, queue_size=1)
         self._isub = rospy.Subscriber("~image", CompressedImage, self.image_callback, queue_size=1)
