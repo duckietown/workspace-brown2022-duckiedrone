@@ -102,7 +102,15 @@ class StateEstimator(DTROS):
 
         self.setup_ukf_with_ground_truth()
         self.start_estimator_subprocess_cmds()
+        self.initialize_ros()
 
+
+    def initialize_ros(self):
+        node_name = os.path.splitext(os.path.basename(__file__))[0]
+        rospy.init_node(node_name)
+
+        rospy.spin()
+        
     
     def start_estimator_subprocess_cmds(self):
         cmd = self.process_cmds_dict[self.primary_estimator]
@@ -135,19 +143,10 @@ class StateEstimator(DTROS):
                 other_cmd = self.append_throttle_flags(other_cmd, other_estimator)
                 process_cmds.append(other_cmd)
 
-        if len(process_cmds) != 1:
-
-            # we broke this to dockerize it, so we can't
-            # run more than one without being fancier.  it was using Popen before.
-            
-            raise ValueError("More than one command: " + str(process_cmds))
         for p in process_cmds:
             print('Starting:' + p)
             # NOTE: shell=True could be security hazard
-            module = __import__(p)
-            
-            self.processes.append((p, module.main))
-            module.main()
+            self.processes.append((p, subprocess.Popen(p, shell=True)))        
             
     def setup_ukf_with_ground_truth(self):
         """
@@ -352,7 +351,7 @@ def main():
                               'loop of the UKF (default: 30)'))
 
     args = parser.parse_args()
-    
+    se = None
     try:
         se = StateEstimator(primary=args.primary,
                             others=args.others,
@@ -366,6 +365,16 @@ def main():
                             loop_hz=args.loop_hz)
     except Exception as e:
         print(e)
+    finally:
+        # Terminate the subprocess calls. Note, however, that if Ctrl-C is
+        # entered in stdin, it seems that the subprocesses also get the Ctrl-C
+        # input and are terminating based on KeyboardInterrupt
+        print('Terminating subprocess calls...')
+        if se != None:
+            for process_name, process in se.processes:
+                print('Terminating:' +  process_name)
+                process.terminate()
+        print('Done.')
 
 
 if __name__ == "__main__":
