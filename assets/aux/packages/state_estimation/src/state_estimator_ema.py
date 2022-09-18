@@ -186,33 +186,34 @@ def main():
     ###########
     # Initialize the state estimator node
     node_name = os.path.splitext(os.path.basename(__file__))[0]
-    rospy.init_node(node_name)
-
+    
     # Instantiate an EMAStateEstimator object
     state_estimator = EMAStateEstimator()
 
     # Publishers
     ############
+    print("pub topic: " + state_estimator.state_topic_str)
     statepub = rospy.Publisher(state_estimator.state_topic_str, State,
                                queue_size=1, tcp_nodelay=False)
 
     # Subscribers
     #############
-    rospy.Subscriber("/pidrone/reset_transform", Empty, state_estimator.reset_callback)
-    rospy.Subscriber('/pidrone/picamera/twist', TwistStamped, state_estimator.twist_callback)
-    rospy.Subscriber('/pidrone/picamera/pose', PoseStamped, state_estimator.pose_callback)
-    rospy.Subscriber('/pidrone/infrared', Range, state_estimator.range_callback)
-    rospy.Subscriber('/pidrone/imu', Imu, state_estimator.imu_callback)
+    
+    s1 = rospy.Subscriber("/pidrone/reset_transform", Empty, state_estimator.reset_callback)
+    s2 = rospy.Subscriber('/pidrone/picamera/twist', TwistStamped, state_estimator.twist_callback)
+    s3 = rospy.Subscriber('/pidrone/picamera/pose', PoseStamped, state_estimator.pose_callback)
+    s4 = rospy.Subscriber('/pidrone/bottom_tof_driver_node/range', Range, state_estimator.range_callback)
+    s5 = rospy.Subscriber('/pidrone/flight_controller_node/imu', Imu, state_estimator.imu_callback)
 
     # set up ctrl-c handler
     signal.signal(signal.SIGINT, state_estimator.ctrl_c_handler)
     print('waiting for velocity and range data')
     while not state_estimator.received_twist_data and not state_estimator.received_range_data:
         pass
-    print('Publishing State')
+    print('Received data; Publishing State')
 
     # set the publishing rate (Hz)
-    rate = rospy.Rate(60)
+    rate = rospy.Rate(15)
     while not rospy.is_shutdown():
         statepub.publish(state_estimator.state)
         rate.sleep()

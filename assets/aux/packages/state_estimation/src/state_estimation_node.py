@@ -350,7 +350,7 @@ def main():
                         type=check_positive_float_duration,
                         help=('Frequency at which to run the predict-update '
                               'loop of the UKF (default: 30)'))
-    print("not parsing arguments")
+
     args = parser.parse_args()
     
     try:
