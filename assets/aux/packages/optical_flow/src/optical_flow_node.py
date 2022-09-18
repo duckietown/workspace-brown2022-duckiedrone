@@ -24,7 +24,7 @@ class OpticalFlowNode(DTROS):
             node_name=node_name,
             node_type=NodeType.PERCEPTION
         )
-        self.twistpub = rospy.Publisher('~twist', TwistStamped, queue_size=1)
+        self.twistpub = rospy.Publisher('/pidrone/picamera/twist', TwistStamped, queue_size=1)
         # flow variables
         camera_wh = (320, 240)        
         self.max_flow = camera_wh[0] / 16.0 * camera_wh[1] / 16.0 * 2**7

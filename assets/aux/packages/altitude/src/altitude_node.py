@@ -29,7 +29,7 @@ class AltitudeNode:
         self._sub_tof = rospy.Subscriber('~tof', Range, self.tof_cb, queue_size=1)
 
         # publishers
-        self._pub = rospy.Publisher('~altitude', Range, queue_size=1)
+        self._pub = rospy.Publisher('/pidrone/altitude', Range, queue_size=1)
         self._heartbeat = rospy.Publisher('~heartbeat', Empty, queue_size=1)
 
     def imu_cb(self, msg):

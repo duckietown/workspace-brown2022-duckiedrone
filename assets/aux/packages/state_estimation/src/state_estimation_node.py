@@ -6,8 +6,9 @@ from brown2022_msgs.msg import State, StateGroundTruth, UkfStats
 import subprocess
 import os
 
+from duckietown.dtros import DTROS, NodeType
 
-class StateEstimator(object):
+class StateEstimator(DTROS):
     """
     This class is intended to unify the different state estimators so that the
     user only has to call this script to interact with state estimators. This
@@ -33,6 +34,10 @@ class StateEstimator(object):
     def __init__(self, primary, others, ir_throttled=False, imu_throttled=False,
                  optical_flow_throttled=False, camera_pose_throttled=False,
                  sdim=1, student_ukf=False, ir_var=None, loop_hz=None):
+        super(StateEstimator, self).__init__(
+            node_name="state_estimation_node",
+            node_type=NodeType.PERCEPTION
+        )        
         self.state_msg = State()
         
         self.ir_throttled = ir_throttled
@@ -346,7 +351,7 @@ def main():
                         help=('Frequency at which to run the predict-update '
                               'loop of the UKF (default: 30)'))
     print("not parsing arguments")
-    args = parser.parse_args(args=[])
+    args = parser.parse_args()
     
     try:
         se = StateEstimator(primary=args.primary,
