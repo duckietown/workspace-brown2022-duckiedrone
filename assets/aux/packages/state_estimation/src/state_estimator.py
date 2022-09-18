@@ -140,7 +140,7 @@ class StateEstimator(DTROS):
             # we broke this to dockerize it, so we can't
             # run more than one without being fancier.  it was using Popen before.
             
-            raise
+            raise ValueError("More than one command: " + str(process_cmds))
         for p in process_cmds:
             print('Starting:' + p)
             # NOTE: shell=True could be security hazard
