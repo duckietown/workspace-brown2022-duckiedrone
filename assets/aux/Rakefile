@@ -12,7 +12,7 @@ end
 
 desc "publish a message on the reset_transform topic, equivalent to 'r' in the old gui"
 task :resetposition do
-  sh "rostopic pub /pidrone/reset_transform std_msgs/Empty"
+  sh "rostopic pub /pidrone/reset_transform std_msgs/Empty --once"
 end
 
 

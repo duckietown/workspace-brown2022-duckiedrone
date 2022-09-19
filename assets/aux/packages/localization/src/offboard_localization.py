@@ -50,9 +50,10 @@ class LocalizationNode:
         self.first_image_pub = rospy.Publisher("/pidrone/picamera/first_image", Image, queue_size=1, latch=True)
 
         self.detector = cv2.ORB_create(nfeatures=NUM_FEATURES, scoreType=cv2.ORB_FAST_SCORE)
-        map_grid_kp, map_grid_des = create_map('map.jpg')
+        map_image, map_grid_kp, map_grid_des = create_map('map.jpg')
         print("map", len(map_grid_kp))
         self.estimator = LocalizationParticleFilter(map_grid_kp, map_grid_des)
+        self.estimator.map_img = map_image
 
         # [x, y, z, yaw]
         self.pos = [0, 0, 0, 0]
@@ -84,10 +85,15 @@ class LocalizationNode:
         curr_rostime = rospy.Time.now()
         self.posemsg.header.stamp = curr_rostime
         curr_time = curr_rostime.to_sec()
+        self.estimator.curr_img = curr_img
 
         # start MCL localization
         if self.locate_position:
             curr_kp, curr_des = self.detector.detectAndCompute(curr_img, None)
+            outimg = curr_img.copy()
+            cv2.drawKeypoints(curr_img, curr_kp, outimg)
+            cv2.imshow("Keypoints", outimg)
+            cv2.waitKey(1)
 
             if curr_kp is not None and curr_kp is not None:
                 # generate particles for the first time
@@ -128,7 +134,7 @@ class LocalizationNode:
                     self.posemsg.pose.orientation.w = w
                     self.posepub.publish(self.posemsg)
 
-                    print('--pose', self.pos[0], self.pos[1], self.pos[3])
+                    #print('--pose', self.pos[0], self.pos[1], self.pos[3])
 
                     # if all particles are not good estimations
                     if is_almost_equal(particle.weight(), PROB_THRESHOLD):
@@ -144,7 +150,7 @@ class LocalizationNode:
                         self.map_counter = 0
                         print('Restart localization')
 
-                    print('count', self.map_counter)
+                    #print('count', self.map_counter)
             else:
                 print("CANNOT FIND ANY FEATURES !!!!!")
 

@@ -201,7 +201,11 @@ class LocalizationParticleFilter:
             sub_map_des = self.map_des[grid_x][grid_y]
 
             # measure current global position
-            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des)
+            if i == 0:
+                draw = True
+            else:
+                draw = False
+            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des, draw)
 
             # compute weight of particle
             if pose is None:
@@ -307,7 +311,7 @@ class LocalizationParticleFilter:
         self.particles = ParticleSet(num_particles, np.array(new_poses))
         return self.get_estimated_position()
 
-    def compute_location(self, kp1, des1, kp2, des2):
+    def compute_location(self, kp1, des1, kp2, des2, draw=False):
         """
         compute the global location of center of current image
         :param kp1: captured keyPoints
@@ -320,7 +324,7 @@ class LocalizationParticleFilter:
         good = []
         pose = None
 
-        if des1 is not None and des2 is not None and len(des2) != 0:
+        if des1 is not None and des2 is not None and len(des2) >= 2 and len(des1) >= 2:
             print("des1", des1)
             print("des1", des1.shape)
             print("des2", des2)
@@ -328,9 +332,21 @@ class LocalizationParticleFilter:
 
             matches = self.matcher.knnMatch(des1, des2, k=2)
 
+            goodd = []
             for match in matches:
                 if len(match) > 1 and match[0].distance < MATCH_RATIO * match[1].distance:
                     good.append(match[0])
+                    goodd.append(match)
+
+            if draw:
+                for match in good:
+                    print("match", match)
+
+                matchimg = cv2.drawMatchesKnn(self.curr_img, kp1, self.map_img, kp2, goodd, None)
+                cv2.imshow("Matches", matchimg)
+                cv2.waitKey(1)
+            
+
 
             if len(good) > MIN_MATCH_COUNT:
                 src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -431,7 +447,7 @@ def create_map(file_name):
                         map_grid_des[i][j].extend(grid_des[x][y])
             map_grid_des[i][j] = np.array(map_grid_des[i][j])
 
-    return map_grid_kp, map_grid_des
+    return image, map_grid_kp, map_grid_des
 
 
 def norm_pdf(x, mu, sigma):
