@@ -40,7 +40,7 @@ MAP_GRID_SIZE_Y = ORB_GRID_SIZE_Y * 3
 CELL_X = float(MAP_PIXEL_WIDTH) / MAP_GRID_SIZE_X
 CELL_Y = float(MAP_PIXEL_HEIGHT) / MAP_GRID_SIZE_Y
 PROB_THRESHOLD = 0.001
-ORB_FEATURES_PER_GRID_CELL = 500
+ORB_FEATURES_PER_GRID_CELL = 500 # was 500
 # -------------------------- #
 
 
@@ -129,7 +129,7 @@ class LocalizationParticleFilter:
         self.angle_x = angle_x
         self.angle_y = angle_y
 
-        transform = self.compute_transform(prev_kp, prev_des, kp, des)
+        transform = self.compute_transform(prev_kp, prev_des, kp, des, draw=True)
 
         if transform is not None:
             print(transform)
@@ -205,7 +205,7 @@ class LocalizationParticleFilter:
                 draw = True
             else:
                 draw = False
-            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des, draw)
+            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des, draw=False)
 
             # compute weight of particle
             if pose is None:
@@ -339,9 +339,6 @@ class LocalizationParticleFilter:
                     goodd.append(match)
 
             if draw:
-                for match in good:
-                    print("match", match)
-
                 matchimg = cv2.drawMatchesKnn(self.curr_img, kp1, self.map_img, kp2, goodd, None)
                 cv2.imshow("Matches", matchimg)
                 cv2.waitKey(1)
@@ -368,16 +365,27 @@ class LocalizationParticleFilter:
 
         return pose, len(good)
 
-    def compute_transform(self, kp1, des1, kp2, des2):
+    def compute_transform(self, kp1, des1, kp2, des2, draw=False):
         transform = None
 
-        if des1 is not None and des2 is not None:
+        if des1 is not None and des2 is not None and len(des2) >= 2 and len(des1) >= 2:
             matches = self.matcher.knnMatch(des1, des2, k=2)
 
             good = []
+            goodd = []
             for match in matches:
                 if len(match) > 1 and match[0].distance < MATCH_RATIO * match[1].distance:
                     good.append(match[0])
+                    goodd.append(match)
+
+            if draw:
+                for match in good:
+                    print("match", match)
+
+                matchimg = cv2.drawMatchesKnn(self.curr_img, kp1, self.map_img, kp2, goodd, None)
+                cv2.imshow("Matches", matchimg)
+                cv2.waitKey(1)
+                    
 
             src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
             dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -416,6 +424,7 @@ def create_map(file_name):
 
     # read image and extract features
     image = cv2.imread(file_name)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     max_total_keypoints = ORB_FEATURES_PER_GRID_CELL * ORB_GRID_SIZE_X * ORB_GRID_SIZE_Y
 

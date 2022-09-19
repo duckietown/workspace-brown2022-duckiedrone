@@ -79,21 +79,23 @@ class LocalizationNode:
         # constant
         self.alpha_yaw = 0.1  # perceived yaw smoothing alpha
         self.hybrid_alpha = 0.3  # blend position with first frame and int
+        self.rate = rospy.Rate(1)
 
     def image_callback(self, data):
-        curr_img = self.bridge.compressed_imgmsg_to_cv2(data, desired_encoding="passthrough")
+        curr_img = self.bridge.compressed_imgmsg_to_cv2(data, desired_encoding="mono8")
         curr_rostime = rospy.Time.now()
         self.posemsg.header.stamp = curr_rostime
         curr_time = curr_rostime.to_sec()
         self.estimator.curr_img = curr_img
+        #cv2.imshow("Now", curr_img)
+        #cv2.waitKey(1)
 
         # start MCL localization
         if self.locate_position:
             curr_kp, curr_des = self.detector.detectAndCompute(curr_img, None)
-            outimg = curr_img.copy()
-            cv2.drawKeypoints(curr_img, curr_kp, outimg)
-            cv2.imshow("Keypoints", outimg)
-            cv2.waitKey(1)
+            #outimg = curr_img.copy()
+            #cv2.drawKeypoints(curr_img, curr_kp, outimg)
+            #cv2.waitKey(1)
 
             if curr_kp is not None and curr_kp is not None:
                 # generate particles for the first time
@@ -166,6 +168,8 @@ class LocalizationNode:
                               "base",
                               "world")
 
+        #self.rate.sleep()
+
     def state_callback(self, data):
         """ update z, angle x, and angle y data when /pidrone/state is published to """
         self.z = data.pose_with_covariance.pose.position.z
@@ -192,7 +196,7 @@ def main():
     
     localization_node = LocalizationNode()
     rospy.Subscriber("/pidrone/reset_transform", Empty, localization_node.reset_callback)
-    rospy.Subscriber('/pidrone/picamera/image_compressed', CompressedImage, localization_node.image_callback)
+    rospy.Subscriber('/pidrone/picamera/image_compressed', CompressedImage, localization_node.image_callback, queue_size=1)
     rospy.Subscriber('/pidrone/state', State, localization_node.state_callback)
 
     print("Start")
