@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """""
 offboard_slam.py
 
@@ -6,9 +8,9 @@ Runs fastSLAM for the pidrone off board, on the pi run 'vision_offboard.py'
 
 import numpy as np
 import cv2
-from sensor_msgs.msg import Image, Range
+from sensor_msgs.msg import Image, Range, CompressedImage
 from std_msgs.msg import Empty
-from pidrone_pkg.msg import State
+from brown2022_msgs.msg import State
 import rospy
 import tf
 from cv_bridge import CvBridge
@@ -58,7 +60,7 @@ class AnalyzePhase:
         self.hybrid_alpha = 0.3  # blend position with first frame and int
 
     def image_callback(self, data):
-        curr_img = self.bridge.imgmsg_to_cv2(data, desired_encoding="passthrough")
+        curr_img = self.bridge.compressed_imgmsg_to_cv2(data, desired_encoding="mono8")
         curr_rostime = rospy.Time.now()
         self.posemsg.header.stamp = curr_rostime
         curr_time = curr_rostime.to_sec()
@@ -85,7 +87,7 @@ class AnalyzePhase:
                     self.posemsg.pose.orientation.w = w
                     self.posepub.publish(self.posemsg)
 
-                    print 'first', pose
+                    print('first', pose)
                 else:
                     pose, weight = self.estimator.run(self.z, self.prev_kp, self.prev_des,
                                                       curr_kp, curr_des)
@@ -107,10 +109,10 @@ class AnalyzePhase:
                     self.posemsg.pose.orientation.w = w
                     self.posepub.publish(self.posemsg)
 
-                    print '--pose', self.pos[0], self.pos[1], self.pos[3]
-                    print '--weight', weight
+                    print('--pose', self.pos[0], self.pos[1], self.pos[3])
+                    print('--weight', weight)
             else:
-                print "CANNOT FIND ANY FEATURES !!!!!"
+                print("CANNOT FIND ANY FEATURES !!!!!")
 
             self.prev_kp = curr_kp
             self.prev_des = curr_des
@@ -132,7 +134,7 @@ class AnalyzePhase:
 
     def reset_callback(self, data):
         """start localization when '/pidrone/reset_transform' is published to (press 'r')"""
-        print "Start localization"
+        print("Start localization")
         self.locate_position = True
         self.first_locate = True
 
@@ -143,10 +145,10 @@ def main():
 
     phase_analyzer = AnalyzePhase()
     rospy.Subscriber('/pidrone/reset_transform', Empty, phase_analyzer.reset_callback)
-    rospy.Subscriber('/pidrone/picamera/image_raw', Image, phase_analyzer.image_callback)
+    rospy.Subscriber('/pidrone/picamera/image_compressed', CompressedImage, phase_analyzer.image_callback)
     rospy.Subscriber('/pidrone/state', State, phase_analyzer.state_callback)
 
-    print "Start"
+    print("Start")
 
     rospy.spin()
 
