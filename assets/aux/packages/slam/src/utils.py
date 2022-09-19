@@ -254,7 +254,7 @@ def compute_transform(matcher, kp1, des1, kp2, des2):
     """
     transform = None
 
-    if des1 is not None and des2 is not None:
+    if des1 is not None and des2 is not None and len(des1) >= 2 and len(des2) >= 2:
         matches = matcher.knnMatch(des1, des2, k=2)
 
         good = []
@@ -267,7 +267,7 @@ def compute_transform(matcher, kp1, des1, kp2, des2):
 
         # estimateRigidTransform needs at least three pairs
         if src_pts is not None and dst_pts is not None and len(src_pts) > 3 and len(dst_pts) > 3:
-            transform = cv2.estimateRigidTransform(src_pts, dst_pts, False)
+            transform, inliers = cv2.estimateAffinePartial2D(src_pts, dst_pts, False)
 
     return transform
 

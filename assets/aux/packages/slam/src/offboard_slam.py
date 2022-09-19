@@ -36,7 +36,7 @@ class AnalyzePhase:
         self.posepub = rospy.Publisher('/pidrone/picamera/pose', PoseStamped, queue_size=1)
         self.first_image_pub = rospy.Publisher("/pidrone/picamera/first_image", Image, queue_size=1, latch=True)
 
-        self.detector = cv2.ORB(nfeatures=NUM_FEATURES, scoreType=cv2.ORB_FAST_SCORE)
+        self.detector = cv2.ORB_create(nfeatures=NUM_FEATURES, scoreType=cv2.ORB_FAST_SCORE)
         self.estimator = FastSLAM()
 
         self.angle_x = 0.0
@@ -68,7 +68,6 @@ class AnalyzePhase:
         # start SLAM
         if self.locate_position:
             curr_kp, curr_des = self.detector.detectAndCompute(curr_img, None)
-
             if curr_kp is not None and len(curr_kp) != 0:
                 # generate particles for the first time
                 if self.first_locate:
@@ -134,7 +133,7 @@ class AnalyzePhase:
 
     def reset_callback(self, data):
         """start localization when '/pidrone/reset_transform' is published to (press 'r')"""
-        print("Start localization")
+        print("Start slam")
         self.locate_position = True
         self.first_locate = True
 
