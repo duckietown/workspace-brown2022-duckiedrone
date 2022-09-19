@@ -205,7 +205,7 @@ class LocalizationParticleFilter:
                 draw = True
             else:
                 draw = False
-            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des, draw=False)
+            pose, num = self.compute_location(kp, des, sub_map_kp, sub_map_des, draw=draw)
 
             # compute weight of particle
             if pose is None:
@@ -340,7 +340,7 @@ class LocalizationParticleFilter:
 
             if draw:
                 matchimg = cv2.drawMatchesKnn(self.curr_img, kp1, self.map_img, kp2, goodd, None)
-                cv2.imshow("Matches", matchimg)
+                cv2.imshow("Map Matches", matchimg)
                 cv2.waitKey(1)
             
 
@@ -366,6 +366,9 @@ class LocalizationParticleFilter:
         return pose, len(good)
 
     def compute_transform(self, kp1, des1, kp2, des2, draw=False):
+        """
+        Try to find the transform between the previous image and the current image.
+        """
         transform = None
 
         if des1 is not None and des2 is not None and len(des2) >= 2 and len(des1) >= 2:
@@ -382,8 +385,8 @@ class LocalizationParticleFilter:
                 for match in good:
                     print("match", match)
 
-                matchimg = cv2.drawMatchesKnn(self.curr_img, kp1, self.map_img, kp2, goodd, None)
-                cv2.imshow("Matches", matchimg)
+                matchimg = cv2.drawMatchesKnn(self.prev_img, kp1, self.curr_img, kp2, goodd, None)
+                cv2.imshow("Frame to Frame Matches", matchimg)
                 cv2.waitKey(1)
                     
 

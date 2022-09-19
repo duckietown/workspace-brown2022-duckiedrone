@@ -35,7 +35,7 @@ CAMERA_CENTER = np.float32([(CAMERA_WIDTH - 1) / 2., (CAMERA_HEIGHT - 1) / 2.]).
 
 # ---------- localization parameters ----------- #
 MAX_BAD_COUNT = -10
-NUM_PARTICLE = 30
+NUM_PARTICLE = 15
 NUM_FEATURES = 200
 # ---------------------------------------------- #
 
@@ -80,13 +80,17 @@ class LocalizationNode:
         self.alpha_yaw = 0.1  # perceived yaw smoothing alpha
         self.hybrid_alpha = 0.3  # blend position with first frame and int
         self.rate = rospy.Rate(1)
+        self.estimator.prev_img = None
+        self.estimator.curr_img = None
 
     def image_callback(self, data):
         curr_img = self.bridge.compressed_imgmsg_to_cv2(data, desired_encoding="mono8")
         curr_rostime = rospy.Time.now()
         self.posemsg.header.stamp = curr_rostime
         curr_time = curr_rostime.to_sec()
+        self.estimator.prev_img = self.estimator.curr_img
         self.estimator.curr_img = curr_img
+
         #cv2.imshow("Now", curr_img)
         #cv2.waitKey(1)
 
