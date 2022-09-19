@@ -10,6 +10,12 @@ task :runrt do
   sh "dts devel run -R cosmo -L rigid-transform-node -M"
 end
 
+desc "publish a message on the reset_transform topic, equivalent to 'r' in the old gui"
+task :resetposition do
+  sh "rostopic pub /pidrone/reset_transform std_msgs/Empty"
+end
+
+
 desc "build image"
 task :build do
   sh "dts devel build -f"

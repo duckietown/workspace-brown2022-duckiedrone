@@ -4,5 +4,8 @@ nmap
 wget
 iputils-ping
 openssh-client
-
-
+git
+emacs
+vim
+less
+screen
