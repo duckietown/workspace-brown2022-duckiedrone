@@ -1,0 +1,20 @@
+version: '3.0'
+
+services:
+    brown2022:
+        image: docker.io/duckietown/env-brown2022-aux:latest-${ARCH}
+        container_name: brown2022
+        restart: unless-stopped
+        network_mode: host
+        command: dt-launcher-sleep
+        stdin_open: true
+        tty: true
+        working_dir: "/home/duckie"
+        environment:
+            DT_USER_WORKSPACES: "${DTM_USER_WORKSPACES}"
+        volumes:
+            - /code:/code/user_ws
+            - /data:/data
+            # avahi socket
+            - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    
