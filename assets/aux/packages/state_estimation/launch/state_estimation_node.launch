@@ -2,6 +2,6 @@
     <arg name="veh" doc="Name of vehicle. ex megaman"/>
 
     <group ns="$(arg veh)">
-        <node pkg="localization" type="localization_node.py" name="localization_node" output='screen' />
+        <node pkg="state_estimation" type="state_estimation_node.py" name="state_estimation_node" output='screen' />
     </group>
 </launch>

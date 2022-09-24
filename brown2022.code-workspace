@@ -13,6 +13,21 @@
             "__SERVICE_NAME__": "brown2022"
         },
         "terminals.terminals": [
+	    {
+                "name": "PID",
+                "description": "PID Controller",
+                "icon": "repo",
+                "open": true,
+                "focus": false,
+                "recycle": true,
+                "env": {
+                    "__SERVICE_NAME__": "pid_controller"
+                },
+                "commands": [
+                    "PATH=/code/user_ws/${__USER_WORKSPACE_NAME__}/assets/bin:${PATH}"
+                ]
+            },
+
             {
                 "name": "DO NOT CLOSE",
                 "description": "Terminal running and keeping alive a giant container",
