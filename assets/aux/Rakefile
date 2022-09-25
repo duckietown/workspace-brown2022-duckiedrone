@@ -15,6 +15,16 @@ task :resetposition do
   sh "rostopic pub /pidrone/reset_transform std_msgs/Empty --once"
 end
 
+desc "publish a message on the reset_transform topic, equivalent to 'r' in the old gui"
+task :positionmode do
+  sh "rostopic pub /pidrone/position_control std_msgs/Bool True --once"
+end
+
+desc "publish a message on the reset_transform topic, equivalent to 'r' in the old gui"
+task :velocitymode do
+  sh "rostopic pub /pidrone/position_control std_msgs/Bool False --once"
+end
+
 
 desc "build image"
 task :build do
