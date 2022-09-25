@@ -6,6 +6,7 @@ services:
         container_name: brown2022
         restart: unless-stopped
         network_mode: host
+	privileged: true
         command: dt-launcher-sleep
         stdin_open: true
         tty: true
