@@ -132,3 +132,4 @@ sudo rmdir ./partitions
 zip "${SD_CARD_ZIP_FILE}" "${SD_CARD_FILE}"
 
 set +ex
+
