@@ -18,6 +18,31 @@ The following operations are performed on the input image:
 
 ## How to generate the image
 
+### Environment setup
+
+In order to execute arbitrary commands on the sd card image environment we need to enable multi-architecture support (in the typical use case our host will be an `amd64` machine, but the Duckiedrone uses a Raspberry Pi with `arm64v8` architecture.).
+
+To enable this we need to install the following packages on our host:
+
+```
+qemu
+binfmt-support
+qemu-user-static
+```
+
+On Ubuntu this can be done by running:
+
+```
+sudo apt install qemu binfmt-support qemu-user-static
+```
+
+Then we need to run a qemu docker container:
+
+```bash
+docker run --rm --privileged multiarch/qemu-user-static:register --reset
+```
+
+### Image generation
 Run the following command to prepare a copy of the image:
 
 ```shell
