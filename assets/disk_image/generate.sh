@@ -68,6 +68,10 @@ sudo mkdir ${ROOT_MOUNTPOINT}/data/config/nodes
 sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/config/nodes
 cp -R ./rootfs/data/config/nodes/* ${ROOT_MOUNTPOINT}/data/config/nodes/
 
+# copy custom autoboot compose file
+sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/autoboot
+cp -f ./rootfs/data/autoboot/duckiedrone.yaml ${ROOT_MOUNTPOINT}/data/autoboot/duckiedrone.yaml
+
 # run dind
 docker run \
     -d \
@@ -82,22 +86,8 @@ docker run \
 sleep 20
 DIND_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' brown2022-disk-image-dind)
 
-# pull image
-docker -H "tcp://${DIND_IP}:2375" pull docker.io/duckietown/env-brown2022-aux:latest-arm64v8
-
-# update all images
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-dashboard:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-files-api:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-code-api:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-proxy:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-health:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-device-online:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-vscode:${DISTRO}-${ARCH}
+# update access point image
 docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-wifi-access-point:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-ros-commons:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-duckiebot-interface:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-drone-interface:${DISTRO}-${ARCH}
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-rosbridge-websocket:${DISTRO}-${ARCH}
 
 # remove old images
 docker -H "tcp://${DIND_IP}:2375" image prune --force
@@ -112,6 +102,9 @@ sudo rm -f ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
 
 # log wifi-access-point by default
 sudo mkdir ${ROOT_MOUNTPOINT}/data/logs/containers/wifi-access-point
+
+# install rake and git
+sudo chroot --userspec=0:0 "${ROOT_MOUNTPOINT}" /bin/bash -c "apt update && apt install -y git rake"
 
 # flush
 sudo sync
