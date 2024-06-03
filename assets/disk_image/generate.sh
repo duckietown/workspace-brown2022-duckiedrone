@@ -4,8 +4,8 @@ set -ex
 
 INPUT_IMG=$1
 OUT_VERSION=$2
-SD_CARD_FILE=./dt-amelia-DD21-brown2022-sd-card-${OUT_VERSION}.img
-SD_CARD_ZIP_FILE=./dt-amelia-DD21-brown2022-sd-card-${OUT_VERSION}.zip
+SD_CARD_FILE=./dt-amelia-DD24-brown2022-sd-card-${OUT_VERSION}.img
+SD_CARD_ZIP_FILE=./dt-amelia-DD24-brown2022-sd-card-${OUT_VERSION}.zip
 ROOT_MOUNTPOINT=./partitions/root
 CONFIG_MOUNTPOINT=./partitions/config
 REGISTRY=docker.io
@@ -15,7 +15,7 @@ ARCH=arm64v8
 # perform surgery
 dts init_sd_card \
     --type duckiedrone \
-    --configuration DD21 \
+    --configuration DD24 \
     --hostname amelia \
     --workdir "$(dirname $INPUT_IMG)" \
     --experimental \
@@ -56,55 +56,8 @@ sudo umount ${CONFIG_MOUNTPOINT}
 # add /config to /etc/fstab
 echo "/dev/mmcblk0p3  /config           vfat    defaults,flush    0       2" | sudo tee -a "${ROOT_MOUNTPOINT}/etc/fstab"
 
-# clone workspace repository
-sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/code
-git clone \
-    https://github.com/duckietown/workspace-brown2022-duckiedrone \
-    ${ROOT_MOUNTPOINT}/code/brown2022
-git -C ${ROOT_MOUNTPOINT}/code/brown2022 status
-
-# copy nodes' configuration files
-sudo mkdir ${ROOT_MOUNTPOINT}/data/config/nodes
-sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/config/nodes
-cp -R ./rootfs/data/config/nodes/* ${ROOT_MOUNTPOINT}/data/config/nodes/
-
-# copy custom autoboot compose file
-sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/autoboot
-cp -f ./rootfs/data/autoboot/duckiedrone.yaml ${ROOT_MOUNTPOINT}/data/autoboot/duckiedrone.yaml
-
-# run dind
-docker run \
-    -d \
-    --rm \
-    --privileged \
-    --name brown2022-disk-image-dind \
-    -v "$(realpath ${ROOT_MOUNTPOINT}/var/lib/docker):/var/lib/docker" \
-    docker:20.10.5-dind \
-        dockerd --host=tcp://0.0.0.0:2375 --bridge=none
-
-# wait for dind to start and then get its IP
-sleep 20
-DIND_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' brown2022-disk-image-dind)
-
-# update access point image
-docker -H "tcp://${DIND_IP}:2375" pull ${REGISTRY}/duckietown/dt-wifi-access-point:${DISTRO}-${ARCH}
-
-# remove old images
-docker -H "tcp://${DIND_IP}:2375" image prune --force
-
-# stop dind
-docker stop brown2022-disk-image-dind
-
-# remove secrets
-ls -alh ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
-sudo shred ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
-sudo rm -f ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
-
-# log wifi-access-point by default
-sudo mkdir ${ROOT_MOUNTPOINT}/data/logs/containers/wifi-access-point
-
-# install rake and git
-sudo chroot --userspec=0:0 "${ROOT_MOUNTPOINT}" /bin/bash -c "apt update && apt install -y git rake"
+# Install rake using chroot
+sudo chroot --userspec=0:0 "${ROOT_MOUNTPOINT}" /bin/bash -c "apt update && apt install -y rake"
 
 # flush
 sudo sync
