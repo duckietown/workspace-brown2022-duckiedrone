@@ -4,9 +4,9 @@ The following tutorial explains how the disk image for `brown2022` is created.
 
 ## Base (input) image
 
-The base image for this course is `dt-raspios-bullseye-lite-v3.0.0-arm64v8.img`
+The base image for this course is `dt-raspios-bullseye-lite-v3.0.8-arm64v8.img`
 and can be downloaded from the official duckietown repository on the DCSS.
-The image is located at `[public]:disk_image/dt-raspios-bullseye-lite-v3.0.0-arm64v8.zip`.
+The image is located at `[public]:disk_image/dt-raspios-bullseye-lite-v3.0.8-arm64v8.zip`.
 
 ## Operations
 
@@ -41,12 +41,18 @@ Then we need to run a qemu docker container:
 ```bash
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 ```
-
-### Image generation
-Run the following command to prepare a copy of the image:
+### Base image retrieval
+Download the base image with the following command:
 
 ```shell
-./generate.sh "<base_image>.img"
+dts data get --space public disk_image/dt-raspios-bullseye-lite-v3.0.8-arm64v8.zip ./dt-raspios-bullseye-lite-v3.0.8-arm64v8.zip
+```
+
+### Image generation
+Run the following command to prepare a copy of the image (`VERSION_NUMBER` being an integer):
+
+```shell
+./generate.sh "<base_image>.img" "<VERSION_NUMBER>"
 ```
 
 ## How to push the image to DCSS
@@ -56,5 +62,5 @@ You might need to ask for permissions before you can push to this space.
 Use the following command to push the final image:
 
 ```shell
-dts data push ./dt-amelia-DD21-brown2022-sd-card-v1.zip public:brown/disk_image/dt-amelia-DD21-brown2022-sd-card-v1.zip
+dts data push ./dt-amelia-DD21-brown2022-sd-card-vXX.zip public:brown/disk_image/dt-amelia-DD21-brown2022-sd-card-vXX.zip
 ```
