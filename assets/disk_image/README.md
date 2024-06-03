@@ -62,5 +62,5 @@ You might need to ask for permissions before you can push to this space.
 Use the following command to push the final image:
 
 ```shell
-dts data push ./dt-amelia-DD21-brown2022-sd-card-vXX.zip public:brown/disk_image/dt-amelia-DD21-brown2022-sd-card-vXX.zip
+dts data push ./dt-amelia-DD24-brown2022-sd-card-vXX.zip public:brown/disk_image/dt-amelia-DD24-brown2022-sd-card-vXX.zip
 ```
