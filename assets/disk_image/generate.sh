@@ -59,6 +59,15 @@ echo "/dev/mmcblk0p3  /config           vfat    defaults,flush    0       2" | s
 # Install rake using chroot
 sudo chroot --userspec=0:0 "${ROOT_MOUNTPOINT}" /bin/bash -c "apt update && apt install -y rake"
 
+# copy custom autoboot compose file
+sudo chown 1000:1000 ${ROOT_MOUNTPOINT}/data/autoboot
+cp -f ./rootfs/data/autoboot/duckiedrone.yaml ${ROOT_MOUNTPOINT}/data/autoboot/duckiedrone.yaml
+
+# remove secrets
+ls -alh ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
+sudo shred ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
+sudo rm -f ${ROOT_MOUNTPOINT}/secrets/tokens/dt1
+
 # flush
 sudo sync
 
